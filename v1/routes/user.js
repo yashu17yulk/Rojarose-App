@@ -7,12 +7,11 @@ const services = require("../services/index");
 const multer = require("multer");
 const path = require("path");
 
-const DIR = "../uploads";
+const DIR = path.join(__dirname, '..' , "uploads");
 
 let storage = multer.diskStorage({
   destination: (req, file, cb) => {
-    cb(null, "/tmp/my-uploads");
-    // cb(null, DIR);
+    cb(null, DIR);
   },
   filename: (req, file, cb) => {
     cb(null, file.originalname);

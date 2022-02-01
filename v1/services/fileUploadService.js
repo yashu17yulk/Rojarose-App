@@ -1,4 +1,4 @@
-var AWS = require('aws-sdk');
+const AWS = require('aws-sdk');
 const fs = require('fs');
 const waterfall = require('async-waterfall')
 const Config = require('../../config/imp')
@@ -6,13 +6,12 @@ const Config = require('../../config/imp')
 AWS.config.update({
   accessKeyId: Config.AWS_ACCESS_KEY_ID,
   secretAccessKey: Config.AWS_SECRET_ACCESS_KEY,
-  region: ""
+  region: "",
 });
 
-var s3 = new AWS.S3();
+const s3 = new AWS.S3();
 
 function upload(req, res, cb) {
-  console.log(req.body.files)
   let response = {
     status: 0,
     data: {},
@@ -49,13 +48,13 @@ function upload(req, res, cb) {
   }
   //  upload to aws
   function uploadtoAws(data, cb) {
-    var ResponseData = [];
+    const ResponseData = [];
     if (data.length > 0) {
 
       data.map((item) => {
         let localImage = item.path;
         let imageRemoteName;
-        var ext = item.originalname.split('.').pop();
+        const ext = item.originalname.split('.').pop();
 
         if (ext !== 'png' && ext !== 'jpg' && ext !== 'gif' && ext !== 'jpeg')
           imageRemoteName = `quizImage_${new Date().getTime()}.${ext}`;
@@ -63,17 +62,17 @@ function upload(req, res, cb) {
           imageRemoteName = `quizImage_${new Date().getTime()}.png`;
 
         s3.putObject({
-          Bucket: BUCKET,
+          Bucket: 'BUCKET',
           Body: fs.readFileSync(localImage),
           Key: imageRemoteName
         })
           .promise()
-          .then((respo) => {
+          .then(() => {
             let imageUrl = `url/${imageRemoteName}`;
-            fs.unlink(`${DIR}/${data[0].originalname}`, (erro) => { })
+            fs.unlink(`${DIR}/${data[0].originalname}`, () => { })
 
             ResponseData.push(imageUrl)
-            if (ResponseData.length == data.length) {
+            if (ResponseData.length === data.length) {
               response.status = 200;
               response.data.image = ResponseData;
               cb(null, response);
@@ -82,19 +81,16 @@ function upload(req, res, cb) {
           .catch((error) => {
             cb(error);
           })
-
       })
 
     } else {
-
       response.status = 400;
       response.data = [];
       response.message = "File not received";
       cb(null, response);
     }
   }
-
-};
+}
 
 module.exports = {
   upload
