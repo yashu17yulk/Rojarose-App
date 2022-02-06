@@ -9,6 +9,8 @@ AWS.config.update({
   region: "",
 });
 
+const BUCKET = 'datingappstorage';
+
 const s3 = new AWS.S3();
 
 function upload(req, res, cb) {
@@ -62,7 +64,7 @@ function upload(req, res, cb) {
           imageRemoteName = `quizImage_${new Date().getTime()}.png`;
 
         s3.putObject({
-          Bucket: 'BUCKET',
+          Bucket: BUCKET,
           Body: fs.readFileSync(localImage),
           Key: imageRemoteName
         })
