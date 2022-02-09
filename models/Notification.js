@@ -47,7 +47,5 @@ const notificationModel = new Schema({
     toJSON: { virtuals: true }
 })
 
-
-
 const notification = mongoose.model('notification', notificationModel);
 module.exports = notification;

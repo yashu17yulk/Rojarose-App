@@ -7,7 +7,7 @@ const jwt = require("jsonwebtoken");
 const mongoose = require("mongoose");
 const FCM = require("fcm-node");
 const moment = require("moment");
-var otp = Math.floor(100000 + Math.random() * 900000);
+const otp = Math.floor(100000 + Math.random() * 900000);
 const ObjectId = mongoose.Types.ObjectId;
 
 /*************************************************************************************************************
@@ -30,7 +30,7 @@ async function signUp(data) {
   }
   await Models.otp.deleteMany({ phone: data.phone });
   await Models.otp.create({ code: otp, phone: data.phone });
-  dataToSend = await Utility.jwtSign({ _id: user._id });
+  let dataToSend = await Utility.jwtSign({_id: user._id});
   // const msg = messages.MESSAGES.OTP_SENT
   // const dataToSend = { user, msg  }
   //  return dataToSend
@@ -72,10 +72,10 @@ async function login(data) {
     data.password,
     user.password
   );
-  if (isMatch != true) {
+  if (isMatch !== true) {
     throw messages.MESSAGES.INVALID_CREDENTAILS;
   }
-  dataToSend = await Utility.jwtSign({ _id: user._id });
+  let dataToSend = await Utility.jwtSign({_id: user._id});
   return {
     token: dataToSend,
     message: messages.MESSAGES.LOGGED_IN_SUCCESSFULLY,
@@ -104,18 +104,16 @@ async function updateProfile(id, data) {
   if (data.password) {
     data.password = await Utility.hashPasswordUsingBcrypt(data.password);
   }
-  const dataToSend = await Models.user.findByIdAndUpdate(
-    { _id: id, isDeleted: false },
-    data,
-    { new: true }
+  return Models.user.findByIdAndUpdate(
+      {_id: id, isDeleted: false},
+      data,
+      {new: true}
   );
-  return dataToSend;
 }
 
 //***** GET PROFILE *****//
 async function getProfile(id) {
-  const user = await Models.user.findById(id);
-  return user;
+  return Models.user.findById(id);
 }
 
 //***** GET Mates *****//
@@ -153,12 +151,11 @@ async function getMates(id, query) {
     bio: 1,
     activities: 1,
   };
-  const mates = await Models.user
-    .find(qry, projection)
-    .populate("themeId", "theme, borderSize", "curveButton", "curveTop")
-    .limit(limit)
-    .skip(skip);
-  return mates;
+  return Models.user
+      .find(qry, projection)
+      .populate("themeId", "theme, borderSize", "curveButton", "curveTop")
+      .limit(limit)
+      .skip(skip);
 }
 
 // /*GET USER BY ID*/
@@ -270,8 +267,7 @@ async function getNotifications(id) {
     userId: id,
     isDeleted: false,
   };
-  const dataToSend = await Models.notification.find(qry, projection);
-  console.log(dataToSend);
+  const dataToSend = await Models.notification.find(qry,projection);
   return { dataToSend };
 }
 
@@ -285,8 +281,7 @@ async function unFriendUser(id, data) {
     friendId: data.friendId,
     isReport: data.isReport,
   };
-  const dataToSend = await Models.friend.create(qry);
-  return dataToSend;
+  return await Models.friend.create(qry);
 }
 
 //*****  Get NEAR BY USERS *****//
@@ -294,7 +289,7 @@ async function getNearByUsers(data) {
   // console.log("data==>",data);
   const long = parseFloat(data.longitude);
   const lat = parseFloat(data.latitude);
-  const dataToSend = await Models.user.find({
+  return Models.user.find({
     userLocation: {
       $near: {
         $geometry: {
@@ -306,16 +301,14 @@ async function getNearByUsers(data) {
       },
     },
   });
-  return dataToSend;
 }
 
 //***** LOGOUT USER *****//
 async function logoutUser(id) {
-  const dataToSend = await Models.user.findOneAndUpdate(
-    { _id: id },
-    { deviceToken: null, isLogout: true }
+  return Models.user.findOneAndUpdate(
+      {_id: id},
+      {deviceToken: null, isLogout: true}
   );
-  return dataToSend;
 }
 module.exports = {
   signUp,

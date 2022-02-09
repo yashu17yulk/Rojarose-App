@@ -30,10 +30,10 @@ app.use((req, res, next) => {
 app.use((err, req, res, next) => {
   console.error(err);
   const status = err.status || 400;
-  if (err.message == "jwt expired" || err.message == "Authentication error") {
+  if (err.message === "jwt expired" || err.message === "Authentication error") {
     res.status(401).send({ statusCode: 401, message: err });
   }
-  if (typeof err == typeof "") {
+  if (typeof err === typeof "") {
     response.sendFailResponse(req, res, status, err);
   } else if (err.Error)
     res.status(status).send({ statusCode: status, message: err.Error });
@@ -42,6 +42,6 @@ app.use((err, req, res, next) => {
   else res.status(status).send({ statusCode: status, message: err.message });
 });
 
-app.listen(4000, () => console.log("run on port 4000"));
+app.listen(4001, () => console.log("run on port 4001"));
 
 // module.exports.handler = serverless(app);

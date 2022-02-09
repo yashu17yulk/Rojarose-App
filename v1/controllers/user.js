@@ -152,6 +152,7 @@ async function getNotifications(req, res, next) {
   try {
     const user = req.user;
     const data = await services.user.getNotifications(user._id);
+    console.log(data);
     return response.sendSuccessResponse(req, res, data, responseCode.OK);
   } catch (error) {
     next(error);
