@@ -50,48 +50,52 @@ function upload(req, res, cb) {
   }
   //  upload to aws
   function uploadtoAws(data, cb) {
-    const ResponseData = [];
-    if (data.length > 0) {
-
-      data.map((item) => {
-        let localImage = item.path;
-        let imageRemoteName;
-        const ext = item.originalname.split('.').pop();
-
-        if (ext !== 'png' && ext !== 'jpg' && ext !== 'gif' && ext !== 'jpeg')
-          imageRemoteName = `quizImage_${new Date().getTime()}.${ext}`;
-        else
-          imageRemoteName = `quizImage_${new Date().getTime()}.png`;
-
-        s3.putObject({
-          Bucket: BUCKET,
-          Body: fs.readFileSync(localImage),
-          Key: imageRemoteName
-        })
-          .promise()
-          .then(() => {
-            let imageUrl = `url/${imageRemoteName}`;
-            fs.unlink(`${DIR}/${data[0].originalname}`, () => { })
-
-            ResponseData.push(imageUrl)
-            if (ResponseData.length === data.length) {
-              response.status = 200;
-              response.data.image = ResponseData;
-              cb(null, response);
-            }
-          })
-          .catch((error) => {
-            cb(error);
-          })
-      })
-
-    } else {
-      response.status = 400;
-      response.data = [];
-      response.message = "File not received";
-      cb(null, response);
-    }
-  }
+  //   const ResponseData = [];
+  //   if (data.length > 0) {
+  //
+  //     data.map((item) => {
+  //       let localImage = item.path;
+  //       let imageRemoteName;
+  //       const ext = item.originalname.split('.').pop();
+  //
+  //       if (ext !== 'png' && ext !== 'jpg' && ext !== 'gif' && ext !== 'jpeg')
+  //         imageRemoteName = `quizImage_${new Date().getTime()}.${ext}`;
+  //       else
+  //         imageRemoteName = `quizImage_${new Date().getTime()}.png`;
+  //
+  //       s3.putObject({
+  //         Bucket: BUCKET,
+  //         Body: fs.readFileSync(localImage),
+  //         Key: imageRemoteName
+  //       })
+  //         .promise()
+  //         .then(() => {
+  //           let imageUrl = `url/${imageRemoteName}`;
+  //           fs.unlink(`${DIR}/${data[0].originalname}`, () => { })
+  //
+  //           ResponseData.push(imageUrl)
+  //           if (ResponseData.length === data.length) {
+  //             response.status = 200;
+  //             response.data.image = ResponseData;
+  //             cb(null, response);
+  //           }
+  //         })
+  //         .catch((error) => {
+  //           cb(error);
+  //         })
+  //     })
+  //
+  //   } else {
+  //     response.status = 400;
+  //     response.data = [];
+  //     response.message = "File not received";
+  //     cb(null, response);
+  //   }
+    response.status = 200;
+    response.data = [];
+    response.message = "File saved in local";
+    cb(null, response);
+   }
 }
 
 module.exports = {
